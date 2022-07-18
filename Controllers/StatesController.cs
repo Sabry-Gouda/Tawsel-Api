@@ -47,7 +47,7 @@ namespace tawsel.Controllers
         public async Task<ActionResult<List<City>>> GetStatecity(int id)
         {
             var cities = _context.Cities.Where(n => n.stateId == id);
-            //////////////////////////////////////
+      
             if (cities == null)
             {
                 return NotFound();
