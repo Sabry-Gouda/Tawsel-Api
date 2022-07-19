@@ -8,10 +8,11 @@ namespace tawsel.DTO
     public class RegisterUserDto
     {
         [Required(ErrorMessage = "FullName is Rquired")]
-        [RegularExpression(@"^[a-z|A-Z]+$", ErrorMessage = "Invalid FullName")]
+        [RegularExpression(@"^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$", ErrorMessage = "Invalid FullName")]
         public string Full_Name { get; set; }
 
         [Required(ErrorMessage = "UserName is Rquired")]
+        [RegularExpression(@"^[a-zA-Z]+[a-z|A-Z|0-9]*$", ErrorMessage = "Invalid UserName")]
         public string UserName { get; set; }
 
         [Required(ErrorMessage = "Password is Rquired")]
