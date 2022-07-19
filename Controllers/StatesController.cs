@@ -43,6 +43,21 @@ namespace tawsel.Controllers
             return state;
         }
 
+
+        [HttpGet("Available")]
+        public async Task<ActionResult<List<State>>> GetAvailableState()
+        {
+            var states =  _context.States.Where(n=>n.status==true);
+
+            if (states == null)
+            {
+                return NotFound();
+            }
+
+            return states.ToList();
+        }
+
+
         [HttpGet("cities/{id}")]
         public async Task<ActionResult<List<City>>> GetStatecity(int id)
         {
