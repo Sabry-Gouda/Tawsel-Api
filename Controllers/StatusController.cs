@@ -43,7 +43,7 @@ namespace tawsel.Controllers
             return status;
         }
 
-        [HttpGet("status/count{id:int}")]
+        [HttpGet("count/{id:int}")]
         public async Task<ActionResult<int>> GetStatusOrders(int id)
         {
            

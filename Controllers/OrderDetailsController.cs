@@ -59,6 +59,27 @@ namespace tawsel.Controllers
 
             return orders;
         }
+
+
+
+        [HttpGet("ststus/{id}")]
+        public  ActionResult<List<OrderDto>> GetOrdersByStatus(int id)
+        {
+            var  status = _context.Statuses.FirstOrDefault(n => n.Id == id);
+
+            List<OrderDto> MyOrders = getallorders();
+            List<OrderDto> newOrders = MyOrders.Where(n => n.status == status.Name).ToList();
+
+
+            if (newOrders == null)
+            {
+                return NotFound();
+            }
+
+            return newOrders;
+        }
+
+
         [HttpGet("{id}")]
         public OrderDto gerOrderById(int id)
         {

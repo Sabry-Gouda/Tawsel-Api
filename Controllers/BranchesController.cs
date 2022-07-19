@@ -31,7 +31,7 @@ namespace tawsel.Controllers
 
 
         [HttpGet("statustrue")]
-        public async Task<ActionResult<List<Branches>>> GetBranchesTrue()
+        public  ActionResult<List<Branches>> GetBranchesTrue()
         {
             var branches = _context.Branches.Where(n => n.status == true);
 
