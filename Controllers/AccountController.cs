@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -11,6 +12,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using tawsel.DTO;
+using tawsel.Helpers;
 using tawsel.models;
 
 namespace tawsel.Controllers
@@ -20,96 +22,131 @@ namespace tawsel.Controllers
     public class AccountController : ControllerBase
     {
         private readonly UserManager<ApplicationUser> usermanger;
+        private readonly RoleManager<CustomRole> _roleManager;
         private readonly IConfiguration config;
+        private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly tawseel dp;
+        private readonly ResponseDto _response;
 
-        //tawseel dp = new tawseel();
-        //customer cust = new customer();
-
-        public AccountController(UserManager<ApplicationUser> usermanger, IConfiguration config , tawseel dp)
+        public AccountController(UserManager<ApplicationUser> usermanger,RoleManager<CustomRole> roleManager, IConfiguration config, SignInManager<ApplicationUser> _signInManager, tawseel dp)
         {
             this.usermanger = usermanger;
+            _roleManager = roleManager;
             this.config = config;
+            this._signInManager = _signInManager;
             this.dp = dp;
+            _response = new ResponseDto();
 
         }
-        //Create Account new User "Registration" "Post"
-        [HttpPost("register")]//api/account/register
+
+        //api/account/register
+        [HttpPost("register")]
+        //[RequestsFilter("Add", "Account")]
         public async Task<IActionResult> Registration(RegisterUserDto userDto)
         {
-            if (ModelState.IsValid)
+            if (userDto is null || !ModelState.IsValid)
             {
-                //save
-                ApplicationUser user = new ApplicationUser();
-                user.UserName = userDto.UserName;
-                user.Email = userDto.Email;
-                var control = dp.Premssions.FirstOrDefault(n => n.Id == userDto.permissionId);
-                usermanger.AddToRoleAsync(user, control.Name);
-                IdentityResult result = await usermanger.CreateAsync(user, userDto.Password);
-
-                if (result.Succeeded)
-                {
-                    return Ok("Account Added Successfully");
-                }
-                return BadRequest(result.Errors.ToList());
+                _response.IsSuccessfulOperation = false;
+                _response.Errors = ModelState.Values.SelectMany(e => e.Errors.Select(error => error.ErrorMessage));
+                return BadRequest(_response);
             }
-            return BadRequest(ModelState.Values.SelectMany(v => v.Errors).Select(error => error.ErrorMessage));
+
+            var userNameExists = await usermanger.FindByNameAsync(userDto.UserName);
+            if (userNameExists is not null)
+            {
+                return BadRequest(new { message = "UserName already Exists" });
+            }
+
+            var emailExists = await usermanger.FindByEmailAsync(userDto.Email);
+            if (emailExists is not null)
+            {
+                return BadRequest(new { message = "Email already Exists" });
+            }
+
+            ApplicationUser user = new ApplicationUser();
+            user.FullName = userDto.Full_Name;
+            user.Email = userDto.Email;
+            user.UserName = userDto.UserName;
+            user.Active = true;
+
+            // add user to Permissions Group
+            user.RoleId = userDto.roleId;
+            var role =  await _roleManager.FindByIdAsync(userDto.roleId);
+
+            if (role is null)
+                return BadRequest(new { messsage = "This Role not Exixts" });
+
+            var result = await usermanger.CreateAsync(user, userDto.Password);
+
+            if (!result.Succeeded)
+                return BadRequest(new { errors = result.Errors.Select(e => e.Description).ToList() });
+
+
+            
+            await usermanger.AddToRoleAsync(user,role.Name);
+            await _signInManager.SignInAsync(user, false);
+            return Ok(new { message = "User Created Successfully" });
+
         }
 
 
-        //Check Account Valid "Login" "Post"
-        [HttpPost("login")]//api/account/login
+        //api/account/login
+        [HttpPost("login")]
         public async Task<IActionResult> Login(LoginUserDto userDto)
         {
-            if (ModelState.IsValid == true)
+            if (userDto is null || !ModelState.IsValid)
             {
-                //check - create token
-                ApplicationUser user = await usermanger.FindByEmailAsync(userDto.Email);
-                if (user != null)//user name found
-                {
-                    bool found = await usermanger.CheckPasswordAsync(user, userDto.Password);
-                    if (found)
-                    {
-                        //Claims Token
-                        var claims = new List<Claim>();
-                        claims.Add(new Claim(ClaimTypes.Name, user.Email));
-                        claims.Add(new Claim(ClaimTypes.NameIdentifier, user.Id));
-                        claims.Add(new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()));
-
-                        //get role
-                        var roles = await usermanger.GetRolesAsync(user);
-                        foreach (var itemRole in roles)
-                        {
-                            claims.Add(new Claim(ClaimTypes.Role, itemRole));
-                        }
-                        SecurityKey securityKey =
-                            new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["JWT:Secret"]));
-
-                        SigningCredentials signincred =
-                            new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-                        //Create token
-                        JwtSecurityToken mytoken = new JwtSecurityToken(
-                            issuer: config["JWT:ValidIssuer"],//url web api
-                            audience: config["JWT:ValidAudiance"],//url consumer angular
-                            claims: claims,
-                            expires: DateTime.Now.AddHours(1),
-                            signingCredentials: signincred
-                            );
-                        return Ok(new
-                        {
-                            token = new JwtSecurityTokenHandler().WriteToken(mytoken),
-                            expiration = mytoken.ValidTo,
-                            userName = user.UserName,
-                            userId = user.Id,
-
-
-                        });
-                    }
-                }
-                return Unauthorized();
-
+                _response.IsSuccessfulOperation = false;
+                _response.Errors = ModelState.Values.SelectMany(e => e.Errors.Select(error => error.ErrorMessage));
+                return BadRequest(_response);
             }
-            return Unauthorized();
+
+            ApplicationUser user = await usermanger.FindByEmailAsync(userDto.Email);
+
+            if (user is null)
+                return Unauthorized(new { message = "This Email Does not Exists" });
+
+            bool isValidPassword = await usermanger.CheckPasswordAsync(user, userDto.Password);
+
+            if (!isValidPassword)
+                return BadRequest(new { message = "UserName or Password is not correct" });
+
+            var claims = new List<Claim>();
+            claims.Add(new Claim(ClaimTypes.Name, user.UserName));
+            claims.Add(new Claim(ClaimTypes.NameIdentifier, user.Id));
+            claims.Add(new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()));
+
+
+            var roles = await usermanger.GetRolesAsync(user);
+            foreach (var itemRole in roles)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, itemRole));
+            }
+
+
+            SecurityKey securityKey =
+                new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["JWT:Secret"]));
+
+            SigningCredentials signincred =
+                new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+
+            JwtSecurityToken token = new JwtSecurityToken(
+                issuer: config["JWT:ValidIssuer"],
+                audience: config["JWT:ValidAudiance"],
+                claims: claims,
+                expires: DateTime.Now.AddHours(1),
+                signingCredentials: signincred
+                );
+
+
+            return Ok(new
+            {
+                token = new JwtSecurityTokenHandler().WriteToken(token),
+                expiration = token.ValidTo,
+                userName = user.UserName,
+                userId = user.Id
+
+            }); ;
         }
     }
 }

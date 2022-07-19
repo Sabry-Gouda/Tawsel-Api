@@ -7,19 +7,20 @@ namespace tawsel.models
     {
         [ForeignKey("page")]
         public int PageId { get; set; }
+
         [ForeignKey("role")]
-
         public string RoleID { get; set; }
-        [ForeignKey("permission")]
 
+        [ForeignKey("permission")]
         public int permissionId { get; set; }
+        
         [JsonIgnore]
         public page page { get; set; }
-        [JsonIgnore]
 
+        [JsonIgnore]
         public CustomRole role { get; set; }
-        [JsonIgnore]
 
+        [JsonIgnore]
         public Premssion permission { get; set; }
 
 

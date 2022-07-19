@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using tawsel.models;
 
 namespace tawsel.Migrations
 {
     [DbContext(typeof(tawseel))]
-    partial class tawseelModelSnapshot : ModelSnapshot
+    [Migration("20220719084705_v14")]
+    partial class v14
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -204,14 +206,14 @@ namespace tawsel.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
+                    b.Property<int>("PermissionGroupId")
+                        .HasColumnType("int");
+
                     b.Property<string>("PhoneNumber")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
-
-                    b.Property<string>("RoleId")
-                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
@@ -233,7 +235,7 @@ namespace tawsel.Migrations
                         .HasDatabaseName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
-                    b.HasIndex("RoleId");
+                    b.HasIndex("PermissionGroupId");
 
                     b.ToTable("AspNetUsers");
                 });
@@ -603,11 +605,13 @@ namespace tawsel.Migrations
 
             modelBuilder.Entity("tawsel.models.ApplicationUser", b =>
                 {
-                    b.HasOne("tawsel.models.CustomRole", "Role")
+                    b.HasOne("tawsel.models.Premssion", "Premssion")
                         .WithMany()
-                        .HasForeignKey("RoleId");
+                        .HasForeignKey("PermissionGroupId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Navigation("Role");
+                    b.Navigation("Premssion");
                 });
 
             modelBuilder.Entity("tawsel.models.Branches", b =>

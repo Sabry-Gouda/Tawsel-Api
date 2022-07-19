@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using tawsel.models;
@@ -13,36 +14,34 @@ namespace tawsel.Controllers
     [ApiController]
     public class CustomRolesController : ControllerBase
     {
-        private readonly tawseel _context;
+        private readonly RoleManager<CustomRole> _roleManager;
 
-        public CustomRolesController(tawseel context)
+        public CustomRolesController(RoleManager<CustomRole> roleManager)
         {
-            _context = context;
+            _roleManager = roleManager;
         }
 
         // GET: api/CustomRoles
         [HttpGet]
         public async Task<ActionResult<IEnumerable<CustomRole>>> GetCustomRoles()
         {
-            return await _context.CustomRoles.ToListAsync();
+            return _roleManager.Roles.ToList();
         }
 
         // GET: api/CustomRoles/5
         [HttpGet("{id}")]
         public async Task<ActionResult<CustomRole>> GetCustomRole(string id)
         {
-            var customRole = await _context.CustomRoles.FindAsync(id);
+            var customRole = await _roleManager.FindByIdAsync(id);
 
             if (customRole == null)
             {
-                return NotFound();
+                return NotFound(new {message = "Can not find this role"});
             }
 
             return customRole;
         }
 
-        // PUT: api/CustomRoles/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> PutCustomRole(string id, CustomRole customRole)
         {
@@ -51,23 +50,7 @@ namespace tawsel.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(customRole).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!CustomRoleExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            await _roleManager.UpdateAsync(customRole);
 
             return NoContent();
         }
@@ -77,23 +60,7 @@ namespace tawsel.Controllers
         [HttpPost]
         public async Task<ActionResult<CustomRole>> PostCustomRole(CustomRole customRole)
         {
-            _context.CustomRoles.Add(customRole);
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateException)
-            {
-                if (CustomRoleExists(customRole.Id))
-                {
-                    return Conflict();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
+            await _roleManager.CreateAsync(customRole);
             return CreatedAtAction("GetCustomRole", new { id = customRole.Id }, customRole);
         }
 
@@ -101,21 +68,18 @@ namespace tawsel.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCustomRole(string id)
         {
-            var customRole = await _context.CustomRoles.FindAsync(id);
-            if (customRole == null)
-            {
-                return NotFound();
-            }
+            var role = await _roleManager.FindByIdAsync(id);
+            if (role is null)
+                return BadRequest(new { message = "This role dose not exits" });
 
-            _context.CustomRoles.Remove(customRole);
-            await _context.SaveChangesAsync();
-
+            await _roleManager.DeleteAsync(role);
             return NoContent();
         }
 
-        private bool CustomRoleExists(string id)
+        private async Task<bool> CustomRoleExists(string id)
         {
-            return _context.CustomRoles.Any(e => e.Id == id);
+           var role = await _roleManager.FindByIdAsync(id);
+            return role is null ? false : true;
         }
     }
 }

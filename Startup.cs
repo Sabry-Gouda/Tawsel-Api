@@ -32,7 +32,7 @@ namespace tawsel
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<tawseel>(options => { options.UseSqlServer(Configuration.GetConnectionString("cs")); });
-            services.AddIdentity<ApplicationUser, IdentityRole>()
+            services.AddIdentity<ApplicationUser, CustomRole>()
                 .AddEntityFrameworkStores<tawseel>();
 
 
