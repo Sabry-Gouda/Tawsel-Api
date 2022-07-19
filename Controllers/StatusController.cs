@@ -53,10 +53,7 @@ namespace tawsel.Controllers
             }
             var statusnum =  _context.Orders.Count(n=>n.StatusId==id);
 
-            if (statusnum == null)
-            {
-                return NotFound(new { message = "No Matching" });
-            }
+        
 
             return statusnum;
         }
