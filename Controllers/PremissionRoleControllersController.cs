@@ -2,15 +2,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using tawsel.Helpers;
 using tawsel.models;
 
 namespace tawsel.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class PremissionRoleControllersController : ControllerBase
     {
         private readonly tawseel _context;
@@ -44,6 +47,8 @@ namespace tawsel.Controllers
         // PUT: api/PremissionRoleControllers/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
+        [RequestsFilter("update", "PremissionRoleControllers")]
+
         public async Task<IActionResult> PutPremissionRoleController(string id, PremissionRoleController premissionRoleController)
         {
             if (id != premissionRoleController.RoleID)
@@ -75,6 +80,8 @@ namespace tawsel.Controllers
         // POST: api/PremissionRoleControllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [RequestsFilter("insert", "PremissionRoleControllers")]
+
         public async Task<ActionResult<PremissionRoleController>> PostPremissionRoleController(PremissionRoleController premissionRoleController)
         {
             _context.PremissionRoleControllers.Add(premissionRoleController);
@@ -99,6 +106,8 @@ namespace tawsel.Controllers
 
         // DELETE: api/PremissionRoleControllers/5
         [HttpDelete("{id}")]
+        [RequestsFilter("delete", "PremissionRoleControllers")]
+
         public async Task<IActionResult> DeletePremissionRoleController(string id)
         {
             var premissionRoleController = await _context.PremissionRoleControllers.FindAsync(id);

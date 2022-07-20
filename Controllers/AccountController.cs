@@ -41,7 +41,7 @@ namespace tawsel.Controllers
 
         //api/account/register
         [HttpPost("register")]
-        //[RequestsFilter("Add", "Account")]
+        [RequestsFilter("insert", "Account")]
         public async Task<IActionResult> Registration(RegisterUserDto userDto)
         {
             if (userDto is null || !ModelState.IsValid)

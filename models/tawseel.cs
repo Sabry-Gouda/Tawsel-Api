@@ -14,10 +14,17 @@ namespace tawsel.models
         {
 
         }
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            
+            base.OnConfiguring(optionsBuilder);
+            optionsBuilder.UseSqlServer("Data Source=.;Initial Catalog=tawseel;Integrated Security=True");
+        }
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
             builder.Entity<PremissionRoleController>().HasKey(n => new { n.RoleID, n.PageId, n.permissionId });
+            
         }
 
 

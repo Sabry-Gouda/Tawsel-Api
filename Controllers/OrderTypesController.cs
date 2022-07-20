@@ -2,15 +2,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using tawsel.Helpers;
 using tawsel.models;
 
 namespace tawsel.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class OrderTypesController : ControllerBase
     {
         private readonly tawseel _context;
@@ -44,6 +47,8 @@ namespace tawsel.Controllers
         // PUT: api/OrderTypes/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
+        [RequestsFilter("update", "OrderTypes")]
+
         public async Task<IActionResult> PutOrderTypes(int id, OrderTypes orderTypes)
         {
             if (id != orderTypes.id)
@@ -75,6 +80,8 @@ namespace tawsel.Controllers
         // POST: api/OrderTypes
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [RequestsFilter("insert", "OrderTypes")]
+
         public async Task<ActionResult<OrderTypes>> PostOrderTypes(OrderTypes orderTypes)
         {
             _context.OrderTypes.Add(orderTypes);
@@ -85,6 +92,8 @@ namespace tawsel.Controllers
 
         // DELETE: api/OrderTypes/5
         [HttpDelete("{id}")]
+        [RequestsFilter("delete", "OrderTypes")]
+
         public async Task<IActionResult> DeleteOrderTypes(int id)
         {
             var orderTypes = await _context.OrderTypes.FindAsync(id);

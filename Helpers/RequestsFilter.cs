@@ -40,11 +40,10 @@ namespace tawsel.Helpers
 
         string getToken(ActionExecutingContext context)
         {
-            var key = context.HttpContext.Request.Headers["Authorization"];
-            var array = key.ToString().Split(" ");
-            var token = array[1];
+            return context.HttpContext.Request.Headers["Authorization"][0].Split(" ")[1];
 
-            return token;
+
+             
         }
 
 
@@ -62,7 +61,7 @@ namespace tawsel.Helpers
             };
             var claimsPrinciple = handler.ValidateToken(token, validations, out var tokenSecure);
             var role = claimsPrinciple.Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value);
-            return "";
+            return role.ElementAt(0);
         }
     }
 }

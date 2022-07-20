@@ -2,15 +2,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using tawsel.Helpers;
 using tawsel.models;
 
 namespace tawsel.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class CitiesController : ControllerBase
     {
         private readonly tawseel _context;
@@ -44,6 +47,8 @@ namespace tawsel.Controllers
         // PUT: api/Cities/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
+        [RequestsFilter("update", "Cities")]
+
         public async Task<IActionResult> PutCity(int id, City city)
         {
             if (id != city.Id)
@@ -75,6 +80,8 @@ namespace tawsel.Controllers
         // POST: api/Cities
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [RequestsFilter("insert", "Cities")]
+
         public async Task<ActionResult<City>> PostCity(City city)
         {
             _context.Cities.Add(city);
@@ -85,6 +92,8 @@ namespace tawsel.Controllers
 
         // DELETE: api/Cities/5
         [HttpDelete("{id}")]
+        [RequestsFilter("delete", "Cities")]
+
         public async Task<IActionResult> DeleteCity(int id)
         {
             var city = await _context.Cities.FindAsync(id);

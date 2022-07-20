@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using tawsel.Helpers;
 using tawsel.models;
 
 namespace tawsel.Controllers
@@ -44,6 +45,8 @@ namespace tawsel.Controllers
         // PUT: api/CashTypes/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
+        [RequestsFilter("update", "CashType")]
+
         public async Task<IActionResult> PutCashType(int id, CashType cashType)
         {
             if (id != cashType.id)
@@ -75,6 +78,8 @@ namespace tawsel.Controllers
         // POST: api/CashTypes
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [RequestsFilter("insert", "CashType")]
+
         public async Task<ActionResult<CashType>> PostCashType(CashType cashType)
         {
             _context.CashType.Add(cashType);

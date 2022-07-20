@@ -2,15 +2,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using tawsel.Helpers;
 using tawsel.models;
 
 namespace tawsel.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class OrdersController : ControllerBase
     {
         private readonly tawseel _context;
@@ -46,6 +49,8 @@ namespace tawsel.Controllers
         // PUT: api/Orders/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
+        [RequestsFilter("update", "Orders")]
+
         public async Task<IActionResult> PutOrder(int id, Order order)
         {
             if (id != order.Id)
@@ -77,6 +82,8 @@ namespace tawsel.Controllers
         // POST: api/Orders
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [RequestsFilter("insert", "Orders")]
+
         public async Task<ActionResult<Order>> PostOrder(Order order)
         {
             _context.Orders.Add(order);
@@ -87,6 +94,8 @@ namespace tawsel.Controllers
 
         // DELETE: api/Orders/5
         [HttpDelete("{id}")]
+        [RequestsFilter("delete", "Orders")]
+
         public async Task<IActionResult> DeleteOrder(int id)
         {
             var order = await _context.Orders.FindAsync(id);

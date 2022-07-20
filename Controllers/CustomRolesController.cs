@@ -2,16 +2,19 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using tawsel.Helpers;
 using tawsel.models;
 
 namespace tawsel.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class CustomRolesController : ControllerBase
     {
         private readonly RoleManager<CustomRole> _roleManager;
@@ -43,6 +46,8 @@ namespace tawsel.Controllers
         }
 
         [HttpPut("{id}")]
+        [RequestsFilter("update", "CustomRoles")]
+
         public async Task<IActionResult> PutCustomRole(string id, CustomRole customRole)
         {
             if (id != customRole.Id)
@@ -58,6 +63,8 @@ namespace tawsel.Controllers
         // POST: api/CustomRoles
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [RequestsFilter("insert", "CustomRoles")]
+
         public async Task<ActionResult<CustomRole>> PostCustomRole(CustomRole customRole)
         {
             await _roleManager.CreateAsync(customRole);
@@ -66,6 +73,8 @@ namespace tawsel.Controllers
 
         // DELETE: api/CustomRoles/5
         [HttpDelete("{id}")]
+        [RequestsFilter("delete", "CustomRoles")]
+
         public async Task<IActionResult> DeleteCustomRole(string id)
         {
             var role = await _roleManager.FindByIdAsync(id);

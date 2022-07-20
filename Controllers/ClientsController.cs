@@ -2,15 +2,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using tawsel.Helpers;
 using tawsel.models;
 
 namespace tawsel.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class ClientsController : ControllerBase
     {
         private readonly tawseel _context;
@@ -29,6 +32,7 @@ namespace tawsel.Controllers
 
         // GET: api/Clients/5
         [HttpGet("{id}")]
+
         public async Task<ActionResult<Client>> GetClient(int id)
         {
             var client = await _context.Clients.FindAsync(id);
@@ -44,6 +48,8 @@ namespace tawsel.Controllers
         // PUT: api/Clients/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
+        [RequestsFilter("update", "Clients")]
+
         public async Task<IActionResult> PutClient(int id, Client client)
         {
             if (id != client.id)
@@ -75,6 +81,8 @@ namespace tawsel.Controllers
         // POST: api/Clients
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [RequestsFilter("insert", "Clients")]
+
         public async Task<ActionResult<Client>> PostClient(Client client)
         {
             _context.Clients.Add(client);
@@ -85,6 +93,8 @@ namespace tawsel.Controllers
 
         // DELETE: api/Clients/5
         [HttpDelete("{id}")]
+        [RequestsFilter("delete", "Clients")]
+
         public async Task<IActionResult> DeleteClient(int id)
         {
             var client = await _context.Clients.FindAsync(id);

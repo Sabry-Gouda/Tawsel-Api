@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using tawsel.Helpers;
 using tawsel.models;
 
 namespace tawsel.Controllers
@@ -61,6 +62,9 @@ namespace tawsel.Controllers
         // PUT: api/Branches/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
+        [RequestsFilter("update", "Branches")]
+
+
         public async Task<IActionResult> PutBranches(int id, Branches branches)
         {
             if (id != branches.id)
@@ -92,6 +96,8 @@ namespace tawsel.Controllers
         // POST: api/Branches
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [RequestsFilter("insert", "Branches")]
+
         public async Task<ActionResult<Branches>> PostBranches(Branches branches)
         {
             _context.Branches.Add(branches);
@@ -102,6 +108,8 @@ namespace tawsel.Controllers
 
         // DELETE: api/Branches/5
         [HttpDelete("{id}")]
+        [RequestsFilter("delete", "Branches")]
+
         public async Task<IActionResult> DeleteBranches(int id)
         {
             var branches = await _context.Branches.FindAsync(id);

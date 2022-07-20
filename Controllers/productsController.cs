@@ -2,15 +2,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using tawsel.Helpers;
 using tawsel.models;
 
 namespace tawsel.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class productsController : ControllerBase
     {
         private readonly tawseel _context;
@@ -44,6 +47,8 @@ namespace tawsel.Controllers
         // PUT: api/products/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
+        [RequestsFilter("update", "products")]
+
         public async Task<IActionResult> Putproduct(int id, product product)
         {
             if (id != product.id)
@@ -75,6 +80,8 @@ namespace tawsel.Controllers
         // POST: api/products
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [RequestsFilter("insert", "products")]
+
         public async Task<ActionResult<product>> Postproduct(product product)
         {
             _context.products.Add(product);
@@ -85,6 +92,8 @@ namespace tawsel.Controllers
 
         // DELETE: api/products/5
         [HttpDelete("{id}")]
+        [RequestsFilter("update", "delete")]
+
         public async Task<IActionResult> Deleteproduct(int id)
         {
             var product = await _context.products.FindAsync(id);

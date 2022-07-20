@@ -2,15 +2,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using tawsel.Helpers;
 using tawsel.models;
 
 namespace tawsel.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class PremssionsController : ControllerBase
     {
         private readonly tawseel _context;
@@ -44,6 +47,8 @@ namespace tawsel.Controllers
         // PUT: api/Premssions/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
+        [RequestsFilter("update", "Premssions")]
+
         public async Task<IActionResult> PutPremssion(int id, Premssion premssion)
         {
             if (id != premssion.Id)
@@ -75,6 +80,8 @@ namespace tawsel.Controllers
         // POST: api/Premssions
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [RequestsFilter("insert", "Premssions")]
+
         public async Task<ActionResult<Premssion>> PostPremssion(Premssion premssion)
         {
             _context.Premssions.Add(premssion);
@@ -85,6 +92,8 @@ namespace tawsel.Controllers
 
         // DELETE: api/Premssions/5
         [HttpDelete("{id}")]
+        [RequestsFilter("delete", "Premssions")]
+
         public async Task<IActionResult> DeletePremssion(int id)
         {
             var premssion = await _context.Premssions.FindAsync(id);

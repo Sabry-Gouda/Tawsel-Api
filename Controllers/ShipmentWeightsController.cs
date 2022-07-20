@@ -2,15 +2,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using tawsel.Helpers;
 using tawsel.models;
 
 namespace tawsel.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class ShipmentWeightsController : ControllerBase
     {
         private readonly tawseel _context;
@@ -42,6 +45,8 @@ namespace tawsel.Controllers
         }
 
         [HttpPut]
+
+
         public async Task<IActionResult> PutShipmentWeight(ShipmentWeight shipmentWeight)
         {
             var oldSettings = await _context.WeightSettings.FindAsync(1);
