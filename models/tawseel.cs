@@ -23,9 +23,7 @@ namespace tawsel.models
 
         public virtual DbSet<Premssion> Premssions { get; set; }
         public virtual DbSet<PremissionRoleController> PremissionRoleControllers { get; set; }
-
         public virtual DbSet<CustomRole> CustomRoles { get; set; }
-
         public virtual DbSet<Branches> Branches { get; set; }
         public virtual DbSet<City> Cities { get; set; }
         public virtual DbSet<Status> Statuses { get; set; }
@@ -33,9 +31,8 @@ namespace tawsel.models
         public virtual DbSet<Order> Orders { get; set; }
         public virtual DbSet<Client> Clients { get; set; }
         public virtual DbSet<page> pages { get; set; }
-
+        public virtual DbSet<ShipmentWeight> WeightSettings { get; set; }
         public virtual DbSet<OrderTypes> OrderTypes { get; set; }
-
         public DbSet<tawsel.models.ShippingType> ShippingType { get; set; }
         public DbSet<tawsel.models.CashType> CashType { get; set; }
         public DbSet<tawsel.models.product> products { get; set; }
