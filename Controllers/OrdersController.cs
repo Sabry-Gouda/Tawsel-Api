@@ -106,7 +106,7 @@ namespace tawsel.Controllers
             return _context.Orders.Any(e => e.Id == id);
         }
 
-        [HttpDelete("serial/{serial:string}")]
+        [HttpDelete("serial/{serialNum}")]
         public async Task<IActionResult> DeleteOrderByserial(string serial)
         {
             Order order =  _context.Orders.FirstOrDefault(n=>n.serialNumber==serial);
