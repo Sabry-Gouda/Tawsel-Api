@@ -43,6 +43,22 @@ namespace tawsel.Controllers
             return status;
         }
 
+        [HttpGet("count/{id:int}")]
+        public async Task<ActionResult<int>> GetStatusOrders(int id)
+        {
+           
+            if (_context.Statuses.Find(id) == null)
+            {
+                return NotFound(new { message = "Wrong ID" });
+            }
+            var statusnum =  _context.Orders.Count(n=>n.StatusId==id);
+
+        
+
+            return statusnum;
+        }
+
+
         // PUT: api/Status/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]

@@ -41,6 +41,8 @@ namespace tawsel.Controllers
             return order;
         }
 
+
+
         // PUT: api/Orders/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
@@ -103,5 +105,22 @@ namespace tawsel.Controllers
         {
             return _context.Orders.Any(e => e.Id == id);
         }
+
+        [HttpDelete("serial/{serial:string}")]
+        public async Task<IActionResult> DeleteOrderByserial(string serial)
+        {
+            Order order =  _context.Orders.FirstOrDefault(n=>n.serialNumber==serial);
+            if (order == null)
+            {
+                return NotFound();
+            }
+
+            _context.Orders.Remove(order);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+
     }
 }

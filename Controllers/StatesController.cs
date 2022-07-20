@@ -76,7 +76,7 @@ namespace tawsel.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutState(int id, State state)
         {
-            if (id != state.Id)
+            if (id != state.Id )
             {
                 return BadRequest();
             }
@@ -107,10 +107,16 @@ namespace tawsel.Controllers
         [HttpPost]
         public async Task<ActionResult<State>> PostState(State state)
         {
-            _context.States.Add(state);
-            await _context.SaveChangesAsync();
+            var gov = _context.States.Where(n => n.Name == state.Name);
+            if (gov ==null)
+            {
+                _context.States.Add(state);
+                await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetState", new { id = state.Id }, state);
+                return CreatedAtAction("GetState", new { id = state.Id }, state);
+            }
+            else return BadRequest(new { message = "Government already Exists" });
+
         }
 
         // DELETE: api/States/5
