@@ -36,6 +36,7 @@ namespace tawsel.models
         public DbSet<tawsel.models.ShippingType> ShippingType { get; set; }
         public DbSet<tawsel.models.CashType> CashType { get; set; }
         public DbSet<tawsel.models.product> products { get; set; }
+        public DbSet<Trader> Traders { get; set; }
 
     }
 }

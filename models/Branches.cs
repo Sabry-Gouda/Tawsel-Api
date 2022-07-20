@@ -11,7 +11,6 @@ namespace tawsel.models
         public int id { get; set; }
         public string name { get; set; }
         public DateTime createdDate  { get; set; }
-
         public bool status { get; set; }
 
         [ForeignKey("City")]

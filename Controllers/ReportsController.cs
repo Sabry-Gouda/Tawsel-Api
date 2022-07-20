@@ -42,14 +42,14 @@ namespace tawsel.Controllers
          phoneNumber = n.ApplicationUser.PhoneNumber,
          government = n.State.Name,
          city = n.City.Name,
-         orderCost = n.Cost,
+         orderCost = n.totalCost,
          status = n.Status.Name,
          traderName=n.ApplicationUser.UserName,
          customerName=n.client.name,
          shippingCost=n.shiping.Cost,
          paidShippingAmount=n.City.CostPerCity,
          receivedAmount = 120,
-         companyValue = n.Cost - n.shiping.Cost
+         companyValue = n.totalCost - n.shiping.Cost
         }).ToList();
 
             foreach (var item in reportat)

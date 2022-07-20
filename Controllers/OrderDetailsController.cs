@@ -37,7 +37,7 @@ namespace tawsel.Controllers
                      phoneNumber=n.client.Phone1,
                      government=n.State.Name,
                      city=n.City.Name,
-                     orderCost = n.Cost,
+                     orderCost = n.totalCost,
                      status=n.Status.Name
                  }).ToList();
 
@@ -48,7 +48,7 @@ namespace tawsel.Controllers
                 o.serialNumber = item.serialNumber;
                 o.date = item.date;
                 o.customerData.name = item.name;
-                o.customerData.phoneNumber = item.phoneNumber;
+                o.customerData.phoneNumber1 = item.phoneNumber;
                 o.government = item.government;
                 o.city = item.city;
                 o.orderCost = item.orderCost;
