@@ -6,13 +6,14 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using tawsel.DTO;
 using tawsel.models;
 
 namespace tawsel.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+  
     public class StatusController : ControllerBase
     {
         private readonly tawseel _context;
@@ -56,6 +57,29 @@ namespace tawsel.Controllers
         
 
             return statusnum;
+        }
+
+
+        [HttpGet("countAll")]
+        public async Task<ActionResult<List<StatusDTO>>> GetStatusOrdersCounts()
+        {
+            List<StatusDTO> MyStatus = new List<StatusDTO>();
+            
+            var statuses = _context.Statuses.ToList();
+            foreach(var stat in statuses)
+            {
+                StatusDTO s =new StatusDTO();
+                var statusnum = _context.Orders.Count(n => n.StatusId == stat.Id);
+                s.countNumber = statusnum;
+                s.name = stat.Name;
+                s.id = stat.Id;
+                MyStatus.Add(s);
+
+            }
+
+
+
+            return MyStatus;
         }
 
 
