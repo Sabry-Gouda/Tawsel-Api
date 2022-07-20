@@ -31,7 +31,7 @@ namespace tawsel.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<ShipmentWeight>> GetShipmentWeight(int id)
         {
-            var shipmentWeight = await _context.WeightSettings.FindAsync(id);
+            var shipmentWeight = await _context.WeightSettings.FindAsync(1);
 
             if (shipmentWeight == null)
             {
@@ -41,17 +41,17 @@ namespace tawsel.Controllers
             return shipmentWeight;
         }
 
-        // PUT: api/ShipmentWeights/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutShipmentWeight(int id, ShipmentWeight shipmentWeight)
+        [HttpPut]
+        public async Task<IActionResult> PutShipmentWeight(ShipmentWeight shipmentWeight)
         {
-            if (id != shipmentWeight.Id)
-            {
-                return BadRequest();
-            }
+            var oldSettings = await _context.WeightSettings.FindAsync(1);
 
-            _context.Entry(shipmentWeight).State = EntityState.Modified;
+            if (oldSettings is null)
+                return BadRequest(new { message = "Error In Settings" });
+
+            oldSettings.highestWeight = shipmentWeight.highestWeight;
+            oldSettings.cost = shipmentWeight.cost;
+            oldSettings.additionalPrice = shipmentWeight.additionalPrice;
 
             try
             {
@@ -59,9 +59,9 @@ namespace tawsel.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!ShipmentWeightExists(id))
+                if (!ShipmentWeightExists(1))
                 {
-                    return NotFound();
+                    return NotFound(new {message = "setting not Founded"});
                 }
                 else
                 {
@@ -80,7 +80,7 @@ namespace tawsel.Controllers
             _context.WeightSettings.Add(shipmentWeight);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetShipmentWeight", new { id = shipmentWeight.Id }, shipmentWeight);
+            return CreatedAtAction("GetShipmentWeight", new { id = shipmentWeight.id }, shipmentWeight);
         }
 
         // DELETE: api/ShipmentWeights/5
@@ -101,7 +101,7 @@ namespace tawsel.Controllers
 
         private bool ShipmentWeightExists(int id)
         {
-            return _context.WeightSettings.Any(e => e.Id == id);
+            return _context.WeightSettings.Any(e => e.id == id);
         }
     }
 }
